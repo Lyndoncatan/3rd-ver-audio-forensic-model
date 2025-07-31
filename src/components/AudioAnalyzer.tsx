@@ -127,7 +127,7 @@ const AudioAnalyzer: React.FC<AudioAnalyzerProps> = ({
           <div className="flex items-center space-x-3 mb-4">
             <Brain className="h-6 w-6 text-purple-600 animate-pulse" />
             <div>
-              <div className="font-semibold text-gray-900">AI Analysis in Progress</div>
+              <div className="font-semibold text-gray-900">Analysis in Progress</div>
               <div className="text-sm text-gray-600">{currentStage}</div>
             </div>
           </div>
