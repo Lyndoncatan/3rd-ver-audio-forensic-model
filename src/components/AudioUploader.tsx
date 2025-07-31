@@ -32,23 +32,23 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({
 
   const handleFileSelect = (files: FileList | null) => {
     if (!files) return;
-    
-    const audioFiles = Array.from(files).filter(file => 
-      file.type.startsWith('audio/') || 
+
+    const audioFiles = Array.from(files).filter(file =>
+      file.type.startsWith('audio/') ||
       file.name.match(/\.(mp3|wav|ogg|m4a|aac|flac)$/i)
     );
-    
+
     setUploadedFiles(prev => [...prev, ...audioFiles]);
-    
+
     // Calculate total size
     const totalSize = [...uploadedFiles, ...audioFiles]
       .reduce((acc, file) => acc + file.size, 0) / (1024 * 1024);
     onDatasetSizeChange(totalSize);
-    
+
     // Auto-analyze if files are added
     if (audioFiles.length > 0) {
       analyzeFiles([...uploadedFiles, ...audioFiles]);
-      
+
       // Create URL for the first file and start monitoring
       const firstFile = audioFiles[0];
       const audioUrl = URL.createObjectURL(firstFile);
@@ -58,14 +58,13 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({
 
   const analyzeFiles = async (files: File[]) => {
     setIsAnalyzing(true);
-    
+
     // Simulate AI analysis processing
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     const mockSources: AudioSource[] = files.flatMap((file, fileIndex) => {
-      // Generate multiple sources per file based on analysis
       const numSources = 2 + Math.floor(Math.random() * 3);
-      
+
       return Array.from({ length: numSources }, (_, sourceIndex) => ({
         id: `file-${fileIndex}-source-${sourceIndex}`,
         name: `${file.name.split('.')[0]} - Source ${sourceIndex + 1}`,
@@ -82,28 +81,29 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({
         color: `hsl(${Math.random() * 360}, 70%, 60%)`
       }));
     });
-    
+
     onAudioAnalysis(mockSources);
     setIsAnalyzing(false);
   };
+
   const playFile = (file: File, index: number) => {
     const audioUrl = URL.createObjectURL(file);
     setPlayingFile(file.name);
     onAudioFileReady(audioUrl);
-    
+
     // Auto-stop playing indicator after file duration (estimated)
     setTimeout(() => {
       setPlayingFile(null);
-    }, 30000); // 30 seconds default
+    }, 30000);
   };
 
   const removeFile = (index: number) => {
     const newFiles = uploadedFiles.filter((_, i) => i !== index);
     setUploadedFiles(newFiles);
-    
+
     const totalSize = newFiles.reduce((acc, file) => acc + file.size, 0) / (1024 * 1024);
     onDatasetSizeChange(totalSize);
-    
+
     if (newFiles.length > 0) {
       analyzeFiles(newFiles);
     } else {
@@ -194,11 +194,11 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({
                   <FileAudio className="h-5 w-5 text-purple-600" />
                   <div>
                     <div className="font-medium text-gray-900 truncate max-w-48">
-                        {playingFile === file.name && (
-                          <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full animate-pulse">
-                            Analyzing
-                          </span>
-                        )}
+                      {playingFile === file.name && (
+                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full animate-pulse">
+                          Analyzing
+                        </span>
+                      )}
                       {file.name}
                     </div>
                     <div className="text-sm text-gray-500">
@@ -217,18 +217,18 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({
                   >
                     <X className="h-4 w-4" />
                   </button>
+                  <button
+                    onClick={() => playFile(file, index)}
+                    className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-2 rounded-lg transition-colors"
+                    title="Analyze this file"
+                  >
+                    <Play className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-                    <button
-                      onClick={() => playFile(file, index)}
-                      className="bg-purple-100 hover:bg-purple-200 text-purple-600 p-2 rounded-lg transition-colors"
-                      title="Analyze this file"
-                    >
-                      <Play className="h-4 w-4" />
-                    </button>
       )}
 
       {/* Analysis Status */}
